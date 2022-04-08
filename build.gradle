@@ -5,6 +5,14 @@ plugins {
 	id 'eclipse'
 }
 
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'mon7.project.bookstore.BookstoreApplication'
+		)
+	}
+}
+
 group = 'mon7.project'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
