@@ -9,14 +9,6 @@ group = 'mon7.project'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
-jar {
-	manifest {
-		attributes(
-				'Main-Class': 'mon7.project.bookstore.BookstoreApplication'
-		)
-	}
-}
-
 repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
@@ -42,6 +34,20 @@ dependencies {
 	implementation "org.apache.poi:poi:3.17"
 	implementation "org.apache.poi:poi-ooxml:3.17"
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+// Add these START
+bootJar {
+	archiveClassifier.set('boot')
+}
+
+jar {
+	archiveClassifier.set('')
+	manifest {
+		attributes(
+				'Main-Class': 'mon7.project.bookstore.BookstoreApplication'
+		)
+	}
 }
 
 tasks.named('test') {
