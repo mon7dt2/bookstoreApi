@@ -15,9 +15,6 @@ import mon7.project.bookstore.utils.EmailValidate;
 import mon7.project.bookstore.utils.PasswordValidate;
 import mon7.project.bookstore.utils.SendEmailUtils;
 import mon7.project.bookstore.utils.UserDecodeUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +24,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auths")
-@Api(value = "auth-api", description = "Nhóm API đăng nhập và cấp access token, Không yêu cầu access token")
 public class AuthController {
 
     @Autowired
@@ -37,10 +33,8 @@ public class AuthController {
     @Autowired
     AdminRepository adminRepository;
 
-    @ApiOperation(value = "api đăng nhập cho khách hàng", response = Iterable.class)
     @PostMapping("/customer/login")
-    public Response CustomerLogin(@ApiParam(name = "Authorization", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
-                                  @RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString,
+    public Response CustomerLogin(@RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString,
                                   @RequestBody String fcmToken) {
         Response response;
         try {
@@ -69,10 +63,9 @@ public class AuthController {
         }
         return response;
     }
-    @ApiOperation(value = "Api đăng nhập cho admin", response = Iterable.class)
+
     @PostMapping("/admin/login")
-    public Response AdminLogin(@ApiParam(name = "encodedString", value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả")
-                               @RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString) {
+    public Response AdminLogin(@RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString) {
         Response response;
         try {
             User user = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
@@ -95,11 +88,9 @@ public class AuthController {
 
 
 
-    @ApiOperation(value = "Đăng ký tài khoản khach hang", response = Iterable.class)
+
     @PostMapping("/customers/register")
-    public Response register(@ApiParam(name = HeaderConstant.AUTHORIZATION,
-            value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả", required = true)
-                             @RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString, @ApiParam(name = "customerRegisterBody", value = "Tên đầy đủ KH", required = true)
+    public Response register(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
                              @Valid @RequestBody CustomerRegisterBody customerRegisterBody) {
         Response response;
         try {
@@ -138,10 +129,8 @@ public class AuthController {
         return response;
     }
 
-    @ApiOperation(value = "Đăng ký tài khoản admin", response = Iterable.class)
     @PostMapping("/admins/register")
-    public Response adminRegister(@ApiParam(name = HeaderConstant.AUTHORIZATION, value = "username+\":\"+password, lấy kết quả encode theo Base64, sau đó thêm \"Basic \" + kết quả", required = true)
-                                  @RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString, @ApiParam(name = "adminRegisterBody", value = "Tên đầy đủ KH", required = true)
+    public Response adminRegister(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
                                   @Valid @RequestBody AdminRegisterBody adminRegisterBody) {
         Response response;
         try {
@@ -178,7 +167,6 @@ public class AuthController {
         return response;
     }
 
-    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
     @GetMapping("/registration/confirm/{username}")
     public Response confirm_email(@PathVariable("username") String username) {
         Response response;
@@ -196,7 +184,6 @@ public class AuthController {
         return response;
     }
 
-    @ApiOperation(value = "Xac nhan email", response = Iterable.class)
     @PostMapping("/resend/registration/confirm/{username}")
     public Response resend_confirm_email(@PathVariable("username") String username) {
         Response response;

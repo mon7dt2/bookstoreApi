@@ -8,14 +8,11 @@ import mon7.project.bookstore.customer.models.data.Customer;
 import mon7.project.bookstore.customer.models.view.HeaderProfile;
 import mon7.project.bookstore.customer.models.view.Profile;
 import mon7.project.bookstore.response_model.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/customers")
-@Api(value = "candidate-api", description = "Nhóm API Customer, Yêu cầu access token của Khách hàng")
 @CrossOrigin(origins = "*")
 public class CustomerController {
     @Autowired
@@ -25,7 +22,6 @@ public class CustomerController {
     @Autowired
     RateRepository rateRepository;
 
-    @ApiOperation(value = "Lấy Lấy avatar + email + tên Khách hàng", response = Iterable.class)
     @GetMapping("/headerProfiles/{id}")
     Response getHeaderProfile(@PathVariable("id") String customerID) {
         Response response;

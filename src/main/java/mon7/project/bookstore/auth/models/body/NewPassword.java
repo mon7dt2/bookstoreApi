@@ -1,17 +1,14 @@
 package mon7.project.bookstore.auth.models.body;
 
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class    NewPassword {
     @NotEmpty
     @NotNull
-    @ApiModelProperty(notes = "Mật khẩu cũ",position = 1)
     private String oldPassword;
     @NotEmpty
     @NotNull
-    @ApiModelProperty(notes = "Mật khẩu mới",position = 2)
     private String newPassword;
 
     public String getOldPassword() {
