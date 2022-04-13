@@ -6,7 +6,6 @@ public class Profile {
     private String id;
     private String fullName;
     private String phone;
-    private String address;
     private String identityCard;
     private String description;
     private String avatarUrl;
@@ -29,7 +28,6 @@ public class Profile {
         this.id = customer.getId();
         this.fullName = customer.getFullName();
         this.phone = customer.getPhone();
-        this.address = customer.getAddress();
         this.avatarUrl = customer.getAvatarUrl();
         this.gender = customer.getGender();
         this.birthday = customer.getBirthday();
@@ -67,14 +65,6 @@ public class Profile {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getIdentityCard() {

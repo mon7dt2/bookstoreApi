@@ -1,19 +1,27 @@
-package mon7.project.bookstore.customer.models.body;
+package mon7.project.bookstore.staff.models.body;
 
-public class ProfileBody {
-    private String fullName;
+public class StaffDataBody {
+    private String displayName;
     private String phone;
     private String avatarUrl;
+    private String address;
     private int gender;
-    private String birthday;
+    private String dateOfBirth;
     private String email;
 
-    public String getFullName() {
-        return fullName;
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getPhone() {
@@ -40,12 +48,12 @@ public class ProfileBody {
         this.gender = gender;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getEmail() {

@@ -1,6 +1,6 @@
 package mon7.project.bookstore.admin.models;
 
-import mon7.project.bookstore.auth.models.User;
+import mon7.project.bookstore.auth.models.Account;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -22,7 +22,7 @@ public class Admin {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userID")
-    private User user;
+    private Account account;
 
     public String getId() {
         return id;
@@ -88,11 +88,11 @@ public class Admin {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public Account getUser() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Account account) {
+        this.account = account;
     }
 }

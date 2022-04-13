@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user1")
-public class User {
+@Table(name = "account")
+public class Account {
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
@@ -17,23 +17,15 @@ public class User {
     private String username;
     private String password;
     private String role;
-    private boolean actived;
+    private boolean isActivated;
     private String fcmToken;
 
-    public boolean getActived() {
-        return actived;
-    }
-
-    public void setActived(boolean actived) {
-        this.actived = actived;
-    }
-
-    public User(String username, String password) {
+    public Account(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User() {
+    public Account() {
     }
 
     public String getFcmToken() {
@@ -60,6 +52,14 @@ public class User {
         if (username != null && !username.isEmpty()) {
             this.username = username;
         }
+    }
+
+    public boolean isActivated() {
+        return isActivated;
+    }
+
+    public void setActivated(boolean activated) {
+        isActivated = activated;
     }
 
     public String getPassword() {

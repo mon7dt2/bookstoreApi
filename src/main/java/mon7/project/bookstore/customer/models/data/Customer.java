@@ -1,6 +1,6 @@
 package mon7.project.bookstore.customer.models.data;
 
-import mon7.project.bookstore.auth.models.User;
+import mon7.project.bookstore.auth.models.Account;
 import mon7.project.bookstore.customer.models.body.ProfileBody;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -17,14 +17,13 @@ public class Customer {
     private String fullName;
     private String phone;
     private int gender;
-    private String address;
     private String avatarUrl;
     private String birthday;
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userID")
-    private User user;
+    @JoinColumn(name = "accountID")
+    private Account account;
 
     public String getEmail() {
         return email;
@@ -33,7 +32,6 @@ public class Customer {
     public void update(ProfileBody body) {
         this.fullName = body.getFullName();
         this.phone = body.getPhone();
-        this.address = body.getAddress();
         this.avatarUrl = body.getAvatarUrl();
         this.gender = body.getGender();
         this.birthday = body.getBirthday();
@@ -87,14 +85,6 @@ public class Customer {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getAvatarUrl() {
         return avatarUrl;
     }
@@ -103,11 +93,11 @@ public class Customer {
         this.avatarUrl = avatarUrl;
     }
 
-    public User getUser() {
-        return user;
+    public Account getUser() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Account account) {
+        this.account = account;
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer, String> {
-    Customer findByUser_Id(String userID);
+    Customer findByAccount_Id(String accountID);
     @Query("select new mon7.project.bookstore.customer.models.view.HeaderProfile(" +
             "c.fullName," +
             "c.avatarUrl" +

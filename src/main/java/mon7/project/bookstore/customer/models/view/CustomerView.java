@@ -7,7 +7,6 @@ public class CustomerView {
     private String fullName;
     private String phone;
     private int gender;
-    private String address;
     private String avatarUrl;
     private String birthday;
     private String email;
@@ -20,7 +19,6 @@ public class CustomerView {
         this.fullName = customer.getFullName();
         this.phone = customer.getPhone();
         this.gender = customer.getGender();
-        this.address = customer.getAddress();
         this.avatarUrl = customer.getAvatarUrl();
         this.birthday = customer.getBirthday();
         this.email = customer.getEmail();
@@ -56,14 +54,6 @@ public class CustomerView {
 
     public void setGender(int gender) {
         this.gender = gender;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getAvatarUrl() {

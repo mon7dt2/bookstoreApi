@@ -3,8 +3,6 @@ package mon7.project.bookstore.customer.controller;
 import mon7.project.bookstore.customer.dao.CustomerRepository;
 import mon7.project.bookstore.customer.dao.FeedbackRepository;
 import mon7.project.bookstore.customer.dao.RateRepository;
-import mon7.project.bookstore.customer.models.body.ProfileBody;
-import mon7.project.bookstore.customer.models.data.Customer;
 import mon7.project.bookstore.customer.models.view.HeaderProfile;
 import mon7.project.bookstore.customer.models.view.Profile;
 import mon7.project.bookstore.response_model.*;
