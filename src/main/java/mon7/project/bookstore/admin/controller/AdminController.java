@@ -8,7 +8,6 @@ import mon7.project.bookstore.response_model.OkResponse;
 import mon7.project.bookstore.response_model.Response;
 import mon7.project.bookstore.response_model.ServerErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -18,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admins")
 @CrossOrigin(origins = "*")
-public class AdminController implements ErrorController {
+public class AdminController {
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
