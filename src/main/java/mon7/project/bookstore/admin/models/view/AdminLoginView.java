@@ -1,16 +1,8 @@
-package mon7.project.bookstore.admin.models;
+package mon7.project.bookstore.admin.models.view;
 
-import mon7.project.bookstore.auth.models.Account;
-import org.hibernate.annotations.GenericGenerator;
+import mon7.project.bookstore.admin.models.Admin;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "admin")
-public class Admin {
-    @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
+public class AdminLoginView {
     private String id;
     private String fullName;
     private String DateOfBirth;
@@ -20,9 +12,35 @@ public class Admin {
     private String avatarUrl;
     private String description;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "accountID")
-    private Account account;
+    public AdminLoginView() {
+    }
+
+    public AdminLoginView(String id, String fullName, String dateOfBirth, String email, int gender, String phone, String avatarUrl, String description) {
+        this.id = id;
+        this.fullName = fullName;
+        this.DateOfBirth = dateOfBirth;
+        this.email = email;
+        this.gender = gender;
+        this.phone = phone;
+        this.avatarUrl = avatarUrl;
+        this.description = description;
+    }
+
+    public AdminLoginView(String id, String fullName) {
+        this.id = id;
+        this.fullName = fullName;
+    }
+
+    public AdminLoginView(Admin admin){
+        this.id = admin.getId();
+        this.fullName = admin.getFullName();
+        this.DateOfBirth = admin.getDateOfBirth();
+        this.email = admin.getEmail();
+        this.gender = admin.getGender();
+        this.phone = admin.getPhone();
+        this.avatarUrl = admin.getAvatarUrl();
+        this.description = admin.getDescription();
+    }
 
     public String getId() {
         return id;
@@ -86,13 +104,5 @@ public class Admin {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 }

@@ -13,15 +13,14 @@ public class ResponseConstant {
 
     }
 
-
-
     public static class ErrorMessage {
         public static final String NOT_FOUND = "not found";
-        public static final String RESOURCE_EXIST = "resource exist";
+        public static final String ACCOUNT_NOT_FOUND = "Tài khoản không tồn tại";
+        public static final String RESOURCE_EXIST = "Tài khoản đã tồn tại";
         public static final String INVALID_EMAIL = "invalid email";
-        public static final String ACCOUNT_NOT_VERIFIED = "account has't been verified";
+        public static final String ACCOUNT_NOT_VERIFIED = "Tài khoản chưa được xác nhận";
         public static final String ACCOUNT_VERIFED = "account has been verified";
         public static final String INTERNAL_SERVER_ERROR = "internal server error";
-        public static final String PASSWORD_TOO_SHORT = "Password need to be at lease 6 character length";
+        public static final String PASSWORD_TOO_SHORT = "Mật khẩu phải từ 8 kí tự trở lên";
     }
 }

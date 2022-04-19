@@ -1,18 +1,8 @@
-package mon7.project.bookstore.staff.models.data;
+package mon7.project.bookstore.staff.models.view;
 
-import mon7.project.bookstore.auth.models.Account;
-import mon7.project.bookstore.auth.models.body.StaffRegisterBody;
-import mon7.project.bookstore.staff.models.body.StaffDataBody;
-import org.hibernate.annotations.GenericGenerator;
+import mon7.project.bookstore.staff.models.data.Staff;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "staff")
-public class Staff {
-    @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
+public class StaffLoginView {
     private String id;
     private String displayName;
     private String phone;
@@ -21,31 +11,47 @@ public class Staff {
     private String avatarUrl;
     private String dateOfBirth;
     private String email;
+    private String accountID;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "accountID")
-    private Account account;
-
-    public Staff() {
+    public StaffLoginView(String id, String displayName) {
+        this.id = id;
+        this.displayName = displayName;
     }
 
-    public Staff(StaffRegisterBody body){
-        this.displayName = body.getFullName();
-        this.phone = body.getPhone();
-        this.gender = body.getGender();
-        this.address = body.getAddress();
-        this.dateOfBirth = body.getDateOfBirth();
-        this.email = body.getEmail();
+    public StaffLoginView() {
     }
 
-    public void update(StaffDataBody body){
-        this.displayName = body.getDisplayName();
-        this.phone = body.getPhone();
-        this.gender = body.getGender();
-        this.address = body.getAddress();
-        this.avatarUrl = body.getAvatarUrl();
-        this.dateOfBirth = body.getDateOfBirth();
-        this.email = body.getEmail();
+    public StaffLoginView(String id, String displayName, String phone, int gender,
+                          String address, String avatarUrl, String dateOfBirth, String email, String accountID) {
+        this.id = id;
+        this.displayName = displayName;
+        this.phone = phone;
+        this.gender = gender;
+        this.address = address;
+        this.avatarUrl = avatarUrl;
+        this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.accountID = accountID;
+    }
+
+    public StaffLoginView(Staff staff){
+        this.id = staff.getId();
+        this.displayName = staff.getDisplayName();
+        this.phone = staff.getPhone();
+        this.gender = staff.getGender();
+        this.address = staff.getAddress();
+        this.avatarUrl = staff.getAvatarUrl();
+        this.dateOfBirth = staff.getDateOfBirth();
+        this.email = staff.getEmail();
+        this.accountID = staff.getAccount().getId();
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
     public String getId() {
@@ -110,13 +116,5 @@ public class Staff {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 }

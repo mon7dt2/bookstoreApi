@@ -5,7 +5,7 @@ public class ProfileBody {
     private String phone;
     private String avatarUrl;
     private int gender;
-    private String birthday;
+    private String dateOfBirth;
     private String email;
 
     public String getFullName() {
@@ -40,12 +40,12 @@ public class ProfileBody {
         this.gender = gender;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getEmail() {

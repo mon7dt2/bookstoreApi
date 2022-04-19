@@ -18,7 +18,7 @@ public class Customer {
     private String phone;
     private int gender;
     private String avatarUrl;
-    private String birthday;
+    private String dateOfBirth;
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -34,7 +34,7 @@ public class Customer {
         this.phone = body.getPhone();
         this.avatarUrl = body.getAvatarUrl();
         this.gender = body.getGender();
-        this.birthday = body.getBirthday();
+        this.dateOfBirth = body.getDateOfBirth();
         this.email = body.getEmail();
     }
 
@@ -45,12 +45,20 @@ public class Customer {
         this.email = email;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public int getGender() {
@@ -91,13 +99,5 @@ public class Customer {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public Account getUser() {
-        return account;
-    }
-
-    public void setUser(Account account) {
-        this.account = account;
     }
 }

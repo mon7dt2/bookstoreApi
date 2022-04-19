@@ -1,11 +1,9 @@
 package mon7.project.bookstore.auth.models;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "account")
@@ -17,7 +15,7 @@ public class Account {
     private String username;
     private String password;
     private String role;
-    private boolean isActivated;
+    private int isActivated;
     private String fcmToken;
 
     public Account(String username, String password) {
@@ -54,11 +52,11 @@ public class Account {
         }
     }
 
-    public boolean isActivated() {
+    public int isActivated() {
         return isActivated;
     }
 
-    public void setActivated(boolean activated) {
+    public void setActivated(int activated) {
         isActivated = activated;
     }
 

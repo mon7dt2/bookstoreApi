@@ -10,7 +10,7 @@ public class Profile {
     private String description;
     private String avatarUrl;
     private int gender;
-    private String birthday;
+    private String dateOfBirth;
     private String email;
 
     public Profile() {
@@ -30,7 +30,7 @@ public class Profile {
         this.phone = customer.getPhone();
         this.avatarUrl = customer.getAvatarUrl();
         this.gender = customer.getGender();
-        this.birthday = customer.getBirthday();
+        this.dateOfBirth = customer.getDateOfBirth();
         this.email = customer.getEmail();
     }
 
@@ -43,12 +43,12 @@ public class Profile {
         this.email = email;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getFullName() {

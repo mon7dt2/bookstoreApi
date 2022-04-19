@@ -1,6 +1,6 @@
 package mon7.project.bookstore.auth.models.body;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class    NewPassword {

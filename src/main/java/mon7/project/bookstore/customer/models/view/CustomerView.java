@@ -8,7 +8,7 @@ public class CustomerView {
     private String phone;
     private int gender;
     private String avatarUrl;
-    private String birthday;
+    private String dateOfBirth;
     private String email;
 
     public CustomerView() {
@@ -20,7 +20,7 @@ public class CustomerView {
         this.phone = customer.getPhone();
         this.gender = customer.getGender();
         this.avatarUrl = customer.getAvatarUrl();
-        this.birthday = customer.getBirthday();
+        this.dateOfBirth = customer.getDateOfBirth();
         this.email = customer.getEmail();
     }
 
@@ -64,12 +64,12 @@ public class CustomerView {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getBirthday() {
-        return birthday;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getEmail() {
