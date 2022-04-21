@@ -9,11 +9,15 @@ import mon7.project.bookstore.category.dao.CategoryRepository;
 import mon7.project.bookstore.category.model.Category;
 import mon7.project.bookstore.constants.Constant;
 import mon7.project.bookstore.customer.dao.CustomerRepository;
+import mon7.project.bookstore.customer.models.data.Customer;
 import mon7.project.bookstore.product.dao.BooksImageRepository;
 import mon7.project.bookstore.product.dao.BooksRepository;
+import mon7.project.bookstore.product.dao.CommentRepository;
 import mon7.project.bookstore.product.model.data.Books;
 import mon7.project.bookstore.product.model.data.BooksImage;
+import mon7.project.bookstore.product.model.data.Comment;
 import mon7.project.bookstore.product.model.view.BookPreview;
+import mon7.project.bookstore.product.model.view.CommentView;
 import mon7.project.bookstore.provider.dao.ProviderRepository;
 import mon7.project.bookstore.provider.model.Provider;
 import mon7.project.bookstore.response_model.*;
@@ -31,10 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -58,6 +59,8 @@ public class BooksController {
     BooksRepository booksRepository;
     @Autowired
     BooksImageRepository booksImageRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     @PostMapping("/product")
     public Response addProduct(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
@@ -317,6 +320,141 @@ public class BooksController {
             Page<BookPreview> preview = booksRepository.getBookPreviewByCategory(pageable, category);
             response = new OkResponse(preview);
         } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+//
+// Comment module
+//
+
+    @PostMapping("/product/{bookID}/comment")
+    public Response postComment(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                @PathVariable("bookID") String bookID,
+                                @RequestParam("comment") String commentString){
+        Response response;
+        try{
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            Books book = booksRepository.findById(bookID).get();
+            Customer customer = customerRepository.findByAccount_Id(u.getId());
+            if(customer != null){
+                if(commentString != null){
+                    Comment comment = new Comment(commentString);
+                    comment.setBook(book);
+                    comment.setCustomer(customer);
+                    comment.setIsDeleted(0);
+                    commentRepository.save(comment);
+                    response = new OkResponse(comment.getId());
+                } else {
+                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+                }
+            } else {
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @PatchMapping("/product/{bookID}/comment/{commentID}")
+    public Response editComment(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                @PathVariable("bookID") String bookID,
+                                @PathVariable("commentID") Long commentID,
+                                @RequestParam("comment") String commentString){
+        Response response;
+        try{
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            Books book = booksRepository.findById(bookID).get();
+            if(u.getRole().equals(RoleConstants.ADMIN) || u.getRole().equals(RoleConstants.STAFF) || u.getRole().equals(RoleConstants.CUSTOMER)){
+                if(commentString != null){
+                    Comment comment = commentRepository.findById(commentID).get();
+                    comment.setComment(commentString);
+                    commentRepository.save(comment);
+                    response = new OkResponse(comment.getId());
+                }else {
+                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+                }
+            } else {
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @DeleteMapping("/product/{bookID}/comment/{commentID}")
+    public Response deleteComment(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                  @PathVariable("bookID") String bookID,
+                                  @PathVariable("commentID") Long commentID){
+        Response response;
+        try{
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            Books book = booksRepository.findById(bookID).get();
+            if(u.getRole().equals(RoleConstants.ADMIN) || u.getRole().equals(RoleConstants.STAFF)){
+                Comment comment = commentRepository.findById(commentID).get();
+                comment.setIsDeleted(1);
+                commentRepository.save(comment);
+                response = new OkResponse(comment.getId());
+            } else if (u.getRole().equals(RoleConstants.CUSTOMER)){
+                Comment comment = commentRepository.findById(commentID).get();
+                Customer customer = customerRepository.findByAccount_Id(u.getId());
+                if(comment.getCustomer().getId().equals(customer.getId())){
+                    comment.setIsDeleted(1);
+                    commentRepository.save(comment);
+                    response = new OkResponse(comment.getId());
+                } else {
+                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+                }
+            }else {
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    //for admin & staff
+    @GetMapping("/comment")
+    public Response getAllComments(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                   @Parameter(name = "pageIndex", description = "Index trang, mặc định là 0")
+                                   @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+                                   @Parameter(name = "pageSize", description = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+                                   @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                   @Parameter(name = "sortBy", description = "Trường cần sort, mặc định là " + Comment.CREATED_AT)
+                                   @RequestParam(value = "sortBy", defaultValue = Comment.CREATED_AT) String sortBy,
+                                   @Parameter(name = "sortType", description = "Nhận (asc | desc), mặc định là desc")
+                                   @RequestParam(value = "sortType", defaultValue = "desc") String sortType){
+        Response response;
+        try {
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            if(u.getRole().equals(RoleConstants.ADMIN) || u.getRole().equals(RoleConstants.STAFF)){
+                Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+                Page<CommentView> page = commentRepository.getAllComments(pageable);
+                response = new OkResponse(page);
+            } else {
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
             ex.printStackTrace();
             response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
