@@ -1,8 +1,5 @@
 package mon7.project.bookstore.category.controller;
 
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.StorageException;
-import com.google.firebase.cloud.StorageClient;
 import io.swagger.v3.oas.annotations.Parameter;
 import mon7.project.bookstore.admin.dao.ApplicationVersionRepository;
 import mon7.project.bookstore.auth.dao.AccountRespository;
@@ -15,6 +12,7 @@ import mon7.project.bookstore.customer.dao.CustomerRepository;
 import mon7.project.bookstore.response_model.*;
 import mon7.project.bookstore.staff.dao.StaffRepository;
 import mon7.project.bookstore.utils.PageAndSortRequestBuilder;
+import mon7.project.bookstore.utils.UploadUtils;
 import mon7.project.bookstore.utils.UserDecodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
-import java.io.Serializable;
 
 @RestController
 @RequestMapping("/api")
@@ -56,7 +54,6 @@ public class CategoryController {
             @RequestParam(value = "sortType", defaultValue = "desc") String sortType
     ){
         Response response;
-
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_CATEGORY_PAGE_SIZE);
             Page<Category> categoryPreview = categoryRepository.getAllCategories(pageable);
@@ -74,16 +71,15 @@ public class CategoryController {
 
         try {
             Category category = categoryRepository.getById(categoryID);
-            if(category == null){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+            if(category.getIsDeleted() == 0){
+                CategoryPreview categoryPreview = new CategoryPreview(category);
+                response = new OkResponse(categoryPreview);
             } else {
-                if(category.getIsDeleted() == 0){
-                    CategoryPreview categoryPreview = new CategoryPreview(category);
-                    response = new OkResponse(categoryPreview);
-                } else {
-                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
-                }
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -93,8 +89,8 @@ public class CategoryController {
 
     @PostMapping("/category")
     public Response addCategory(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
-                                @RequestParam(value = "displayName",required = true) String displayName,
-                                @RequestParam(value = "cover",required = true) MultipartFile cover){
+                                @RequestParam(value = "displayName") String displayName,
+                                @RequestParam(value = "cover") MultipartFile cover){
         Response response;
         try {
             Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
@@ -105,7 +101,7 @@ public class CategoryController {
                     category.setIsDeleted(0);
                     categoryRepository.save(category);
                     if (cover != null) {
-                        String coverUrl = uploadFile("category/" + category.getId(), category.getId() + "_cover.jpg",
+                        String coverUrl = UploadUtils.uploadFile("category/" + category.getId(), category.getId() + "_cover.jpg",
                                 cover.getBytes(), "image/jpeg");
                         category.setCoverUrl(coverUrl);
                         categoryRepository.save(category);
@@ -124,7 +120,7 @@ public class CategoryController {
         return response;
     }
 
-    @PutMapping("/category/{categoryID}")
+    @PatchMapping("/category/{categoryID}")
     public Response updateCategory(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
                                    @PathVariable("categoryID") Long categoryID,
                                    @RequestParam(value = "displayName") String displayName,
@@ -135,25 +131,24 @@ public class CategoryController {
             if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
                     accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
                 Category category = categoryRepository.getById(categoryID);
-                if(category != null){
-                    if(category.getDisplayName().equals(displayName)){
-                        response = new ResourceExistResponse(ResponseConstant.ErrorMessage.RESOURCE_CATEGORY_EXIST);
-                    } else {
-                        category.setDisplayName(displayName);
-                        if (cover != null) {
-                            String coverUrl = uploadFile("category/" + category.getId(), category.getId() + "_cover.jpg",
-                                    cover.getBytes(), "image/jpeg");
-                            category.setCoverUrl(coverUrl);
-                        }
-                        categoryRepository.save(category);
-                        response = new OkResponse(category.getId());
-                    }
+                if(category.getDisplayName().equals(displayName)){
+                    response = new ResourceExistResponse(ResponseConstant.ErrorMessage.RESOURCE_CATEGORY_EXIST);
                 } else {
-                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
+                    category.setDisplayName(displayName);
+                    if (cover != null) {
+                        String coverUrl = UploadUtils.uploadFile("category/" + category.getId(), category.getId() + "_cover.jpg",
+                                cover.getBytes(), "image/jpeg");
+                        category.setCoverUrl(coverUrl);
+                    }
+                    categoryRepository.save(category);
+                    response = new OkResponse(category.getId());
                 }
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -170,33 +165,19 @@ public class CategoryController {
             if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
                     accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
                 Category category = categoryRepository.getById(categoryID);
-                if(category != null){
-                    category.setIsDeleted(1);
-                    categoryRepository.save(category);
-                    response = new OkResponse("OK");
-                } else {
-                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
-                }
+                category.setIsDeleted(1);
+                categoryRepository.save(category);
+                response = new OkResponse("OK");
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
         }
         return response;
-    }
-
-    public static String uploadFile(String dir, String fileName,
-                                    byte[] data,
-                                    String contentType) throws StorageException {
-        Blob avatarFile = StorageClient.getInstance()
-                .bucket()
-                .create(dir+"/"+fileName, data, contentType);
-        return getDownloadUrl(avatarFile.getBucket(), avatarFile.getName());
-    }
-
-    public static String getDownloadUrl(String bucketUrl, String fileName) {
-        return "http://storage.googleapis.com/" + bucketUrl + "/" + fileName;
     }
 }

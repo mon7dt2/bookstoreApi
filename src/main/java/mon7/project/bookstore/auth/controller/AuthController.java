@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 @RestController
@@ -230,26 +231,26 @@ public class AuthController {
         return response;
     }
 
-    @PutMapping("/{accountID}/password")
+    @PatchMapping("/{accountID}/password")
     public Response changePassword(@PathVariable("accountID") String accountID,
                                    @Valid @RequestBody NewPassword newPassword){
         Response response;
         try {
             Account account = accountRespository.getById(accountID);
-            if (account == null) {
-                return new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
-            }else {
-                if(account.getPassword().matches(newPassword.getOldPassword())){
-                    account.setPassword(newPassword.getNewPassword());
-                    accountRespository.save(account);
-                    response = new OkResponse(ResponseConstant.MSG_OK);
-                } else {
-                    response = new Response(HttpStatus.CONFLICT, ResponseConstant.Vi.OLD_PASSWORD_MISMATCH);
-                }
+            if(account.getPassword().matches(newPassword.getOldPassword())){
+                account.setPassword(newPassword.getNewPassword());
+                accountRespository.save(account);
+                response = new OkResponse(ResponseConstant.MSG_OK);
+            } else {
+                response = new Response(HttpStatus.CONFLICT, ResponseConstant.Vi.OLD_PASSWORD_MISMATCH);
             }
         }catch (Exception e) {
             e.printStackTrace();
-            response = new ServerErrorResponse();
+            if(e.getClass() == EntityNotFoundException.class){
+                return new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
+            } else {
+                response = new ServerErrorResponse();
+            }
         }
         return response;
     }

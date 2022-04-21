@@ -14,7 +14,7 @@ public class ResponseConstant {
     }
 
     public static class ErrorMessage {
-        public static final String NOT_FOUND = "not found";
+        public static final String NOT_FOUND = "Không tìm thấy";
         public static final String ACCOUNT_NOT_FOUND = "Tài khoản không tồn tại";
         public static final String CATEGORY_NOT_FOUND = "Danh mục không tồn tại";
         public static final String ADDRESS_NOT_FOUND = "Không tìm thấy địa chỉ nào";

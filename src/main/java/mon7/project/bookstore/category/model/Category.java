@@ -3,7 +3,6 @@ package mon7.project.bookstore.category.model;
 import mon7.project.bookstore.category.model.body.CategoryBody;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity

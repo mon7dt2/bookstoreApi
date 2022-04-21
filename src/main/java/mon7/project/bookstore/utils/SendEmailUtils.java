@@ -5,6 +5,7 @@ package mon7.project.bookstore.utils;
 //import org.apache.commons.mail.Email;
 //import org.apache.commons.mail.SimpleEmail;
 
+@SuppressWarnings("CommentedOutCode")
 public class SendEmailUtils {
     public static void SendMail(String to) {
 //        String from = "tuaananh.khong.96@gmail.com";

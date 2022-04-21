@@ -1,7 +1,6 @@
 package mon7.project.bookstore.provider.dao;
 
 import mon7.project.bookstore.provider.model.Provider;
-import mon7.project.bookstore.provider.model.view.ProviderPreview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

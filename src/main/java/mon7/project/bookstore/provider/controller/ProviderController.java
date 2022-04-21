@@ -74,20 +74,19 @@ public class ProviderController {
             if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
                     accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
                 Provider provider = providerRepository.getById(providerID);
-                if(provider != null){
-                    if(provider.getIsDeleted() == 0){
-                        Provider view = new Provider(provider.getId(),provider.getDisplayName(), provider.getDescription(),
-                                            provider.getAddress(), provider.getPhone(), provider.getEmail());
-                        response = new OkResponse(view);
-                    } else {
-                        response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
-                    }
+                if(provider.getIsDeleted() == 0){
+                    Provider view = new Provider(provider.getId(),provider.getDisplayName(), provider.getDescription(),
+                                        provider.getAddress(), provider.getPhone(), provider.getEmail());
+                    response = new OkResponse(view);
                 } else {
-                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.PROVIDER_NOT_FOUND);
+                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.CATEGORY_NOT_FOUND);
                 }
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e){
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -121,7 +120,7 @@ public class ProviderController {
         return response;
     }
 
-    @PutMapping("/provider/{providerID}")
+    @PatchMapping("/provider/{providerID}")
     public Response updateProvider(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
                                    @PathVariable("providerID") Long providerID,
                                    @RequestBody ProviderBody body){
@@ -141,13 +140,12 @@ public class ProviderController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e){
             e.printStackTrace();
-            if(e.getClass() == EntityNotFoundException.class){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.PROVIDER_NOT_FOUND);
-            } else {
-                response = new ServerErrorResponse();
-            }
+            response = new ServerErrorResponse();
         }
         return response;
     }
@@ -167,13 +165,12 @@ public class ProviderController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e){
             e.printStackTrace();
-            if(e.getClass() == EntityNotFoundException.class){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.PROVIDER_NOT_FOUND);
-            } else {
-                response = new ServerErrorResponse();
-            }
+            response = new ServerErrorResponse();
         }
         return response;
     }

@@ -1,7 +1,6 @@
 package mon7.project.bookstore.auth.models;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 

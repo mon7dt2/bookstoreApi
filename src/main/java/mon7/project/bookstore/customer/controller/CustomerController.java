@@ -14,7 +14,6 @@ import mon7.project.bookstore.customer.models.data.Customer;
 import mon7.project.bookstore.customer.models.view.AddressView;
 import mon7.project.bookstore.customer.models.view.HeaderProfile;
 import mon7.project.bookstore.customer.models.view.Profile;
-import mon7.project.bookstore.provider.model.Provider;
 import mon7.project.bookstore.response_model.*;
 import mon7.project.bookstore.utils.PageAndSortRequestBuilder;
 import mon7.project.bookstore.utils.UserDecodeUtils;
@@ -24,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -118,6 +116,9 @@ public class CustomerController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -144,18 +145,17 @@ public class CustomerController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            if(e.getClass() == EntityNotFoundException.class){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
-            } else {
-                response = new ServerErrorResponse();
-            }
+            response = new ServerErrorResponse();
         }
         return response;
     }
 
-    @PutMapping("/address/{addressID}")
+    @PatchMapping("/address/{addressID}")
     public Response updateAddress(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
                                   @RequestParam(value = "customerID") String customerID,
                                   @PathVariable("addressID") String addressID,
@@ -176,13 +176,12 @@ public class CustomerController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            if(e.getClass() == EntityNotFoundException.class){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ADDRESS_NOT_FOUND);
-            } else {
-                response = new ServerErrorResponse();
-            }
+            response = new ServerErrorResponse();
         }
         return response;
     }
@@ -203,13 +202,12 @@ public class CustomerController {
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
-        }catch (Exception e){
+        } catch (EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e){
             e.printStackTrace();
-            if(e.getClass() == EntityNotFoundException.class){
-                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ADDRESS_NOT_FOUND);
-            } else {
-                response = new ServerErrorResponse();
-            }
+            response = new ServerErrorResponse();
         }
         return response;
     }

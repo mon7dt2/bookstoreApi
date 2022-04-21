@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
+@SuppressWarnings("CommentedOutCode")
 public class PageAndSortRequestBuilder {
 
 //    public static Pageable createPageRequest(Integer pageIndex,
