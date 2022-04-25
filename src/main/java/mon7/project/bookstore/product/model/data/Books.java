@@ -20,6 +20,7 @@ public class Books {
     private String description;
     private String avatarUrl;
     private Double price;
+    private Float vote;
     private Long quantity;
     private Date createdAt;
     private Date updatedAt;
@@ -48,6 +49,7 @@ public class Books {
         this.quantity = quantity;
         this.author = author;
         this.publisher = publisher;
+        this.vote = 0f;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
@@ -155,5 +157,13 @@ public class Books {
 
     public void setIsDeleted(int isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public Float getVote() {
+        return vote;
+    }
+
+    public void setVote(Float vote) {
+        this.vote = vote;
     }
 }

@@ -14,6 +14,7 @@ public class ResponseConstant {
     }
 
     public static class ErrorMessage {
+        public static final String INVALID_INPUT = "Dữ liệu gửi lên sai định dạng";
         public static final String NOT_FOUND = "Không tìm thấy";
         public static final String ACCOUNT_NOT_FOUND = "Tài khoản không tồn tại";
         public static final String CATEGORY_NOT_FOUND = "Danh mục không tồn tại";
@@ -29,5 +30,6 @@ public class ResponseConstant {
         public static final String INTERNAL_SERVER_ERROR = "internal server error";
         public static final String PASSWORD_TOO_SHORT = "Mật khẩu phải từ 8 kí tự trở lên";
         public static final String ACCOUNT_FORBIDDEN_ROLE = "Không có quyền truy cập tới chức năng này!";
+        public static final String ITEM_NOT_ENOUGH = "Số lượng đặt hàng không hợp lệ";
     }
 }

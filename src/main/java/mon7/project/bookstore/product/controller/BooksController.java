@@ -463,4 +463,63 @@ public class BooksController {
         }
         return response;
     }
+
+    @GetMapping("/product/{bookID}/comment")
+    public Response getCommentInProduct(@PathVariable("bookID") String bookID,
+                                        @Parameter(name = "pageIndex", description = "Index trang, mặc định là 0")
+                                        @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+                                        @Parameter(name = "pageSize", description = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+                                        @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                        @Parameter(name = "sortBy", description = "Trường cần sort, mặc định là " + Comment.CREATED_AT)
+                                        @RequestParam(value = "sortBy", defaultValue = Comment.CREATED_AT) String sortBy,
+                                        @Parameter(name = "sortType", description = "Nhận (asc | desc), mặc định là desc")
+                                        @RequestParam(value = "sortType", defaultValue = "desc") String sortType){
+        Response response;
+        try {
+                Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+                Page<CommentView> page = commentRepository.getAllComments(pageable);
+                response = new OkResponse(page);
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    //vote
+    @PostMapping("/product/{bookID}/vote")
+    public Response voteProduct(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                @PathVariable("bookID") String bookID,
+                                @RequestParam("vote") Float vote){
+        Response response;
+        try {
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            if(u.getRole().equals(RoleConstants.CUSTOMER)){
+                Books book = booksRepository.findById(bookID).get();
+                if(vote != null){
+                    book.setVote(vote);
+                    booksRepository.save(book);
+                    response = new OkResponse(book.getId());
+                } else {
+                    response = new ServerErrorResponse(ResponseConstant.ErrorMessage.INVALID_INPUT);
+                }
+            } else {
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 }
+
+
+
+

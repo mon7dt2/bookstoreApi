@@ -6,4 +6,8 @@ public class ServerErrorResponse extends Response {
     public <T> ServerErrorResponse() {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ResponseConstant.ErrorMessage.INTERNAL_SERVER_ERROR);
     }
+
+    public <T> ServerErrorResponse(String what) {
+        super(HttpStatus.INTERNAL_SERVER_ERROR, what);
+    }
 }
