@@ -12,6 +12,8 @@ public interface AccountRespository extends JpaRepository<Account,String> {
 
     Account findByUsername(String username);
 
+    Account findByStaff_Id(String staffID);
+
     @Query("select u.isActivated from Account u where u.username = :username and u.role = :role")
     int isActivated(@Param("username") String username, @Param("role") String role);
 

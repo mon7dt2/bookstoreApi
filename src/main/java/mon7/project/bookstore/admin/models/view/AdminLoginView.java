@@ -11,11 +11,12 @@ public class AdminLoginView {
     private String phone;
     private String avatarUrl;
     private String description;
+    private String role;
 
     public AdminLoginView() {
     }
 
-    public AdminLoginView(String id, String fullName, String dateOfBirth, String email, int gender, String phone, String avatarUrl, String description) {
+    public AdminLoginView(String id, String fullName, String dateOfBirth, String email, int gender, String phone, String avatarUrl, String description, String role) {
         this.id = id;
         this.fullName = fullName;
         this.DateOfBirth = dateOfBirth;
@@ -24,6 +25,7 @@ public class AdminLoginView {
         this.phone = phone;
         this.avatarUrl = avatarUrl;
         this.description = description;
+        this.role = role;
     }
 
     public AdminLoginView(String id, String fullName) {
@@ -40,6 +42,7 @@ public class AdminLoginView {
         this.phone = admin.getPhone();
         this.avatarUrl = admin.getAvatarUrl();
         this.description = admin.getDescription();
+        this.role = admin.getAccount().getRole();
     }
 
     public String getId() {
@@ -104,5 +107,13 @@ public class AdminLoginView {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

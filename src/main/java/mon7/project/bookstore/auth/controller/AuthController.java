@@ -80,9 +80,7 @@ public class AuthController {
         Response response;
         try {
             Account account = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
-            if (accountRespository.isActivated(account.getUsername(), RoleConstants.ADMIN) != 1) {
-                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_VERIFIED);
-            } else {
+            if (accountRespository.isActivated(account.getUsername(), RoleConstants.ADMIN) == 1) {
                 Account login = accountRespository.findByUsernameAndPassword(account.getUsername(), account.getPassword());
                 if (login != null) {
                     Admin admin = adminRepository.findByAccount_Id(login.getId());
@@ -91,6 +89,17 @@ public class AuthController {
                 } else {
                     response = new Response(HttpStatus.UNAUTHORIZED, ResponseConstant.Vi.WRONG_EMAIL_OR_PASSWORD);
                 }
+            } else if(accountRespository.isActivated(account.getUsername(), RoleConstants.STAFF) != 1) {
+                Account login = accountRespository.findByUsernameAndPassword(account.getUsername(), account.getPassword());
+                if (login != null) {
+                    Staff staff = staffRepository.findByAccount_Id(login.getId());
+                    StaffLoginView view = new StaffLoginView(staff);
+                    response = new OkResponse(view);
+                } else {
+                    response = new Response(HttpStatus.UNAUTHORIZED, ResponseConstant.Vi.WRONG_EMAIL_OR_PASSWORD);
+                }
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,7 +126,7 @@ public class AuthController {
                 account.setPassword(u.getPassword());
                 account.setUsername(u.getUsername());
                 account.setRole(RoleConstants.STAFF);
-                account.setActivated(1);
+                account.setActivated(0);
 
                 accountRespository.save(account);
 
@@ -135,29 +144,31 @@ public class AuthController {
         return response;
     }
 
-    @PostMapping("/staff/login")
-    public Response StaffLogin(@RequestHeader(HeaderConstant.AUTHORIZATION) String encodedString) {
+    @PostMapping("/staff/verification/{staffID}")
+    public Response verifyStaff(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                                @PathVariable("staffID") String staffID){
         Response response;
-        try {
-            Account account = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
-            if (accountRespository.findByUsername(account.getUsername()) == null) {
-                return new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
-            }
-            if (accountRespository.isActivated(account.getUsername(), RoleConstants.STAFF) != 1) {
-                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_VERIFIED);
-            } else {
-                Account login = accountRespository.findByUsernameAndPassword(account.getUsername(), account.getPassword());
-                if (login != null) {
-                    Staff staff = staffRepository.findByAccount_Id(login.getId());
-                    StaffLoginView view = new StaffLoginView(staff);
-                    response = new OkResponse(view);
+        try{
+            Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
+            if(u.getRole().equals(RoleConstants.ADMIN)){
+                Account u2 = accountRespository.findByStaff_Id(staffID);
+                if(u2 != null){
+                    u2.setActivated(1);
+                    accountRespository.save(u2);
+                    response = new OkResponse(u2.getId());
                 } else {
-                    response = new Response(HttpStatus.UNAUTHORIZED, ResponseConstant.Vi.WRONG_EMAIL_OR_PASSWORD);
+                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
                 }
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response = new ServerErrorResponse();
+            if(e.getClass() == EntityNotFoundException.class){
+                response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
+            } else {
+                response = new ServerErrorResponse();
+            }
         }
         return response;
     }
