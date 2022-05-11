@@ -151,14 +151,11 @@ public class AuthController {
         try{
             Account u = accountRespository.findByUsername(UserDecodeUtils.decodeFromAuthorizationHeader(encodedString).getUsername());
             if(u.getRole().equals(RoleConstants.ADMIN)){
-                Account u2 = accountRespository.findByStaff_Id(staffID);
-                if(u2 != null){
-                    u2.setActivated(1);
-                    accountRespository.save(u2);
-                    response = new OkResponse(u2.getId());
-                } else {
-                    response = new NotFoundResponse(ResponseConstant.ErrorMessage.ACCOUNT_NOT_FOUND);
-                }
+                Staff staff = staffRepository.getById(staffID);
+                Account u2 = accountRespository.getById(staff.getAccount().getId());
+                u2.setActivated(1);
+                accountRespository.save(u2);
+                response = new OkResponse(u2.getId());
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }
