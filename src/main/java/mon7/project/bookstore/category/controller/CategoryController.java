@@ -56,7 +56,7 @@ public class CategoryController {
         Response response;
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_CATEGORY_PAGE_SIZE);
-            Page<Category> categoryPreview = categoryRepository.getAllCategories(pageable);
+            Page<CategoryPreview> categoryPreview = categoryRepository.getAllCategories(pageable);
             response = new OkResponse(categoryPreview);
         } catch (Exception e) {
             e.printStackTrace();

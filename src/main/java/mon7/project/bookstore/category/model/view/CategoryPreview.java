@@ -10,7 +10,7 @@ public class CategoryPreview {
     public CategoryPreview() {
     }
 
-    public CategoryPreview(Long id, String displayName, String avatarUrl) {
+    public CategoryPreview(long id, String displayName, String avatarUrl) {
         this.id = id;
         this.displayName = displayName;
         this.avatarUrl = avatarUrl;
