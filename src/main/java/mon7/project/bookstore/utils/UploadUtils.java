@@ -15,6 +15,6 @@ public class UploadUtils {
     }
 
     public static String getDownloadUrl(String bucketUrl, String fileName) {
-        return "http://storage.googleapis.com/" + bucketUrl + "/" + fileName;
+        return "https://storage.googleapis.com/" + bucketUrl + "/" + fileName;
     }
 }
