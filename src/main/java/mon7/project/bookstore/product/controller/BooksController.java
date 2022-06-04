@@ -16,6 +16,7 @@ import mon7.project.bookstore.product.dao.CommentRepository;
 import mon7.project.bookstore.product.model.data.Books;
 import mon7.project.bookstore.product.model.data.BooksImage;
 import mon7.project.bookstore.product.model.data.Comment;
+import mon7.project.bookstore.product.model.view.Book;
 import mon7.project.bookstore.product.model.view.BookPreview;
 import mon7.project.bookstore.product.model.view.CommentView;
 import mon7.project.bookstore.provider.dao.ProviderRepository;
@@ -279,6 +280,19 @@ public class BooksController {
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_BOOK_PAGE_SIZE);
             Page<BookPreview> preview = booksRepository.getBookPreview(pageable);
+            response = new OkResponse(preview);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @GetMapping("/products")
+    public Response getProducts(){
+        Response response;
+        try {
+            List<Books> preview = booksRepository.findAll();
             response = new OkResponse(preview);
         } catch (Exception e) {
             e.printStackTrace();

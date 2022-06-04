@@ -2,6 +2,7 @@ package mon7.project.bookstore.product.dao;
 
 import mon7.project.bookstore.category.model.Category;
 import mon7.project.bookstore.product.model.data.Books;
+import mon7.project.bookstore.product.model.view.Book;
 import mon7.project.bookstore.product.model.view.BookPreview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
