@@ -14,11 +14,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BooksRepository extends JpaRepository<Books, String> {
 
-    @Query("SELECT new mon7.project.bookstore.product.model.view.BookPreview(b.id, b.displayName, b.avatarUrl, b.price, b.quantity) " +
-        " FROM Books b WHERE b.isDeleted = 0")
-    Page<BookPreview> getBookPreview(Pageable pageable);
+    @Query( value = "SELECT * " +
+        " FROM books WHERE isDeleted = 0",
+            countQuery = "SELECT count(*) FROM books WHERE isDeleted = 0",
+            nativeQuery = true)
+    Page<Books> getBookPreview(Pageable pageable);
 
-    @Query("SELECT new mon7.project.bookstore.product.model.view.BookPreview(b.id, b.displayName, b.avatarUrl, b.price, b.quantity) " +
-            " FROM Books b WHERE b.isDeleted = 0 AND b.category = :category")
-    Page<BookPreview> getBookPreviewByCategory(Pageable pageable,@Param("category") Category categoryID);
+    @Query(value = "SELECT * " +
+            " FROM books WHERE isDeleted = 0 AND category = :category",
+            countQuery = "SELECT count(*) FROM books WHERE isDeleted = 0"
+            ,nativeQuery = true)
+    Page<Books> getBookPreviewByCategory(Pageable pageable,@Param("category") Category categoryID);
 }

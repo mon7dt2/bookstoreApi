@@ -279,7 +279,7 @@ public class BooksController {
         Response response;
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_BOOK_PAGE_SIZE);
-            Page<BookPreview> preview = booksRepository.getBookPreview(pageable);
+            Page<Books> preview = booksRepository.getBookPreview(pageable);
             response = new OkResponse(preview);
         } catch (Exception e) {
             e.printStackTrace();
@@ -331,7 +331,7 @@ public class BooksController {
         try {
             Category category = categoryRepository.getById(categoryID);
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_BOOK_PAGE_SIZE);
-            Page<BookPreview> preview = booksRepository.getBookPreviewByCategory(pageable, category);
+            Page<Books> preview = booksRepository.getBookPreviewByCategory(pageable, category);
             response = new OkResponse(preview);
         } catch (EntityNotFoundException ex){
             ex.printStackTrace();
