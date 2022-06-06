@@ -6,6 +6,8 @@ import java.util.List;
 
 public class CreateOrderBody {
 
+    private String address;
+
     private List<OrderedProductItem> listProduct;
 
     public List<OrderedProductItem> getListProduct() {
@@ -14,5 +16,13 @@ public class CreateOrderBody {
 
     public void setListProduct(List<OrderedProductItem> listProduct) {
         this.listProduct = listProduct;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

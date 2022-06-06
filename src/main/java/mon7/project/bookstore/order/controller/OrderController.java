@@ -70,6 +70,7 @@ public class OrderController {
                     order.setOrderStatus(0);
                     orderRepository.save(order);
                     order.setSearchKey("dlbs-" + order.getId().substring(0,7));
+                    order.setAddress(body.getAddress());
                     orderRepository.save(order);
 
                     for(OrderedProductItem item: body.getListProduct()){

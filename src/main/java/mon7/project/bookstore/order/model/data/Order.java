@@ -23,6 +23,7 @@ public class Order {
     private double totalPrice;
     private Date createdAt;
     private Date updatedAt;
+    private String address;
 
     /*
      * status la cac so nguyen tuong ung voi cac giai doan giao hang
@@ -36,7 +37,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(String id, String searchKey, Customer customer, double totalPrice, Date createdAt, Date updatedAt, int orderStatus) {
+    public Order(String id, String searchKey, Customer customer, double totalPrice, Date createdAt, Date updatedAt, int orderStatus, String address) {
         this.id = id;
         this.searchKey = searchKey;
         this.customer = customer;
@@ -44,6 +45,7 @@ public class Order {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.orderStatus = orderStatus;
+        this.address = address;
     }
 
     public Order(String searchKey, Customer customer, double totalPrice) {
@@ -114,5 +116,13 @@ public class Order {
 
     public void setOrderStatus(int orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
