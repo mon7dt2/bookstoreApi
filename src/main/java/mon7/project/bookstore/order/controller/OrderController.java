@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -92,6 +93,98 @@ public class OrderController {
                 } else {
                     response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
                 }
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @GetMapping("/orders")
+    Response getAllOrders(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
+                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
+                List<Order> list = orderRepository.findAll();
+                response = new OkResponse(list);
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        }  catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
+    @GetMapping("/order/{orderID}")
+    Response getOrderById(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                          @PathVariable("orderID") String orderID){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
+                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
+                List<OrderDetail> list = orderDetailRepository.findByOrder_Id(orderID);
+                response = new OkResponse(list);
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        }  catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+    @PutMapping("/order/{orderID}")
+    Response updateOrder(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                         @PathVariable("orderID") String orderID,
+                         @RequestParam(value = "state", required = true) int state){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
+                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
+                Order o = orderRepository.findById(orderID).get();
+                o.setOrderStatus(state);
+                orderRepository.save(o);
+                response = new OkResponse(o.getId());
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+    @GetMapping("/order/state/{state}")
+    Response getOrderByState(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString,
+                         @PathVariable("state") int state){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
+                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
+                List<Order> list = orderRepository.findByOrderStatus(state);
+                response = new OkResponse(list);
             } else {
                 response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
             }

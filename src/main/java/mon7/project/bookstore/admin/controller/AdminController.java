@@ -4,6 +4,7 @@ import mon7.project.bookstore.admin.dao.ApplicationVersionRepository;
 import mon7.project.bookstore.auth.dao.AccountRespository;
 import mon7.project.bookstore.auth.models.Account;
 import mon7.project.bookstore.category.dao.CategoryRepository;
+import mon7.project.bookstore.category.model.Category;
 import mon7.project.bookstore.customer.dao.CustomerRepository;
 import mon7.project.bookstore.customer.models.view.CustomerView;
 import mon7.project.bookstore.product.dao.BooksImageRepository;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -70,21 +73,30 @@ public class AdminController {
         return response;
     }
 
-//    @GetMapping("/total/category")
-//    Response getTotalCategory(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString){
+    @GetMapping("/total/category")
+    Response getTotalCategory(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
+                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
+                List<Object[]> list = booksRepository.sumByCategory();
+                Map map = new HashMap();
+                for(Object[] o : list){
+                    Category c = categoryRepository.getById(Long.parseLong(o[0].toString()));
+                    map.put(c.getDisplayName(), o[1]);
+                }
+                response = new OkResponse(map);
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        }catch (Exception e) {
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+//    @GetMapping("/total/order")
+//    Response getTotalOrder(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString){
 //        Response response;
-//        try {
-//            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
-//            if(accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.STAFF) ||
-//                    accountRespository.findByUsername(u.getUsername()).getRole().equals(RoleConstants.ADMIN)){
-//
-//            } else {
-//                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
-//            }
-//        }catch (Exception e) {
-//            response = new ServerErrorResponse();
-//        }
-//        return response;
-//
 //    }
 }

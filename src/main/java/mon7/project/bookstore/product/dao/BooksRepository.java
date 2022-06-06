@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 @Repository
 public interface BooksRepository extends JpaRepository<Books, String> {
 
@@ -25,4 +28,7 @@ public interface BooksRepository extends JpaRepository<Books, String> {
             countQuery = "SELECT count(*) FROM books WHERE isDeleted = 0"
             ,nativeQuery = true)
     Page<Books> getBookPreviewByCategory(Pageable pageable,@Param("category") Category categoryID);
+
+    @Query(value = "SELECT categoryID, count(id) FROM books WHERE isDeleted != 1 GROUP BY categoryID", nativeQuery = true)
+    List<Object[]> sumByCategory();
 }
