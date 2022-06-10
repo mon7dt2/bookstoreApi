@@ -198,4 +198,30 @@ public class OrderController {
         }
         return response;
     }
+
+    @GetMapping("/orders/users")
+    Response getOrderByUser(@RequestHeader(value = HeaderConstant.AUTHORIZATION) String encodedString){
+        Response response;
+        try {
+            Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
+            if(!accountRespository.findByUsername(u.getUsername()).getRole().equals("")){
+                Customer c = customerRepository.findByAccount_Id(u.getId());
+                if(c != null){
+                    List<Order> list = orderRepository.findByCustomer_Id(c.getId());
+                    response = new OkResponse(list);
+                }else {
+                    response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+                }
+            } else {
+                response = new ForbiddenResponse(ResponseConstant.ErrorMessage.ACCOUNT_FORBIDDEN_ROLE);
+            }
+        } catch (NoSuchElementException | EntityNotFoundException ex){
+            ex.printStackTrace();
+            response = new NotFoundResponse(ResponseConstant.ErrorMessage.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 }
