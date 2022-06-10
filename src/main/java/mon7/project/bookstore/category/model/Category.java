@@ -3,11 +3,12 @@ package mon7.project.bookstore.category.model;
 import mon7.project.bookstore.category.model.body.CategoryBody;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "category")
-public class Category {
+public class Category implements Serializable {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String displayName;
