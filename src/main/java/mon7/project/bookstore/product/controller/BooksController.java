@@ -305,7 +305,7 @@ public class BooksController {
     public Response getProductDetail(@PathVariable("bookID") String bookID){
         Response response;
         try {
-            Books book = booksRepository.findById(bookID).get();
+            Books book = booksRepository.getById(bookID);
             response = new OkResponse(book);
         } catch (EntityNotFoundException ex){
             ex.printStackTrace();

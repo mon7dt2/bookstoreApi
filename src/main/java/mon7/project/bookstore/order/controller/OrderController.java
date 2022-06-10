@@ -204,8 +204,8 @@ public class OrderController {
         Response response;
         try {
             Account u = UserDecodeUtils.decodeFromAuthorizationHeader(encodedString);
-            if(!accountRespository.findByUsername(u.getUsername()).getRole().equals("")){
-                Customer c = customerRepository.findByAccount_Id(u.getId());
+            if(accountRespository.findByUsername(u.getUsername()) != null){
+                Customer c = customerRepository.findByAccount_Id(accountRespository.findByUsername(u.getUsername()).getId());
                 if(c != null){
                     List<Order> list = orderRepository.findByCustomer_Id(c.getId());
                     response = new OkResponse(list);
