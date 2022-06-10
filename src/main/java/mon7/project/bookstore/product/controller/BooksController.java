@@ -317,7 +317,7 @@ public class BooksController {
         return response;
     }
 
-    @GetMapping("/products/{categoryID}")
+    @GetMapping("/products/category/{categoryID}")
     public Response getProductByCategory(@PathVariable("categoryID") Long categoryID,
                                          @Parameter(name = "pageIndex", description = "Index trang, mặc định là 0")
                                          @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
@@ -329,9 +329,8 @@ public class BooksController {
                                          @RequestParam(value = "sortType", defaultValue = "desc") String sortType){
         Response response;
         try {
-            Category category = categoryRepository.getById(categoryID);
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_BOOK_PAGE_SIZE);
-            Page<Books> preview = booksRepository.getBookPreviewByCategory(pageable, category);
+            Page<Books> preview = booksRepository.getBookPreviewByCategory(pageable, categoryID);
             response = new OkResponse(preview);
         } catch (EntityNotFoundException ex){
             ex.printStackTrace();

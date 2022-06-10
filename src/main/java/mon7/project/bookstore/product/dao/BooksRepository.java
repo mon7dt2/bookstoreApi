@@ -24,10 +24,10 @@ public interface BooksRepository extends JpaRepository<Books, String> {
     Page<Books> getBookPreview(Pageable pageable);
 
     @Query(value = "SELECT * " +
-            " FROM books WHERE isDeleted = 0 AND categoryID = :category" ,
+            " FROM books WHERE isDeleted = 0 AND categoryID = :categoryID",
             countQuery = "SELECT count(*) FROM books WHERE isDeleted = 0"
             ,nativeQuery = true)
-    Page<Books> getBookPreviewByCategory(Pageable pageable,@Param("category") Category categoryID);
+    Page<Books> getBookPreviewByCategory(Pageable pageable,@Param("categoryID") Long categoryID);
 
     @Query(value = "SELECT categoryID, count(id) FROM books WHERE isDeleted != 1 GROUP BY categoryID", nativeQuery = true)
     List<Object[]> sumByCategory();
