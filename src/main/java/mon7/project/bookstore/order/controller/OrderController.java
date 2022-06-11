@@ -74,7 +74,7 @@ public class OrderController {
                     orderRepository.save(order);
 
                     for(OrderedProductItem item: body.getListProduct()){
-                        if(item.getQty() > 1) {
+                        if(item.getQty() > 0) {
                             Books book = booksRepository.findById(item.getProductID()).get();
                             if(book.getQuantity() > item.getQty()) {
                                 OrderDetail detail = new OrderDetail(book, item.getQty());
