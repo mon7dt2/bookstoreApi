@@ -31,4 +31,7 @@ public interface BooksRepository extends JpaRepository<Books, String> {
 
     @Query(value = "SELECT categoryID, count(id) FROM books WHERE isDeleted != 1 GROUP BY categoryID", nativeQuery = true)
     List<Object[]> sumByCategory();
+
+    @Query(value = "SELECT * FROM books WHERE isDeleted = 0 AND displayName LIKE %:keyword%", nativeQuery = true)
+    List<Books> searchProduct(@Param("keyword") String keyword);
 }

@@ -288,6 +288,21 @@ public class BooksController {
         return response;
     }
 
+    @GetMapping("/product/search")
+    public Response searchProduct(
+            @Parameter(name = "searchKey", description = "Tu khoa")
+            @RequestParam(value = "searchKey") String searchKey){
+        Response response;
+        try {
+            List<Books> preview = booksRepository.searchProduct(searchKey);
+            response = new OkResponse(preview);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
     @GetMapping("/products")
     public Response getProducts(){
         Response response;
